@@ -22,9 +22,10 @@ public class Controller {
 
 
     @PostMapping("/new-game")
-    public ResponseEntity<Game>  createNewGame(@RequestBody PlayersNames playersNames) throws BadRequestException {
+    @ResponseBody
+    public Game  createNewGame( @RequestBody PlayersNames playersNames) throws BadRequestException {
         Game createNewGame = gameService.createNewGame(playersNames);
-        return new ResponseEntity<>(createNewGame, HttpStatus.CREATED);
+        return createNewGame;
     }
 
     @PostMapping("/game/{game-code}/{player-code}/play")
@@ -46,4 +47,7 @@ public class Controller {
         gameService.endGame(gameCode);
     }
 
+
+
 }
+

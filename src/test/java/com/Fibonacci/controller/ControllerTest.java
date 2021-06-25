@@ -1,111 +1,102 @@
 package com.Fibonacci.controller;
 
-import com.Fibonacci.GameScore;
 import com.Fibonacci.entity.Game;
 import com.Fibonacci.entity.Player;
-import com.Fibonacci.exceptions.BadRequestException;
+import com.Fibonacci.model.PlayAMove;
+import com.Fibonacci.model.PlayersNames;
+import com.Fibonacci.model.PlayersScores;
+import com.Fibonacci.model.Score;
 import com.Fibonacci.service.GameService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.parser.Token;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.TestExecutionResult;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+@RunWith(SpringRunner.class)
 @WebMvcTest(value = Controller.class)
 class ControllerTest {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private Controller controller;
     @MockBean
     private GameService gameService;
+    private String baseUrl = "/api";
+
 
     @Test
     void createNewGame() throws Exception {
-//        Game game = new Game();
-//
-//        List<String> names = new ArrayList<>();
-//        names.add("ahmed");
+        LinkedHashSet<String> player = new LinkedHashSet<>(Arrays.asList("ahmed","mohamed"));
+        PlayersNames playersNames = new PlayersNames(player);
 
-//        String json="{\n" +
-//                "    \"gameCode\": \"gameCode\",\n" +
-//                "    \"players\": [\n" +
-//                "        {\n" +
-//                "            \"playerName\": \"ahmed\",\n" +
-//                "            \"playerCode\": \"playerCode\"\n" +
-//                "        }\n" +
-////                "    ]\n" +
-////                "}";
-//        when(gameService.createNewGame(names)).thenReturn(game);
-//        mockMvc.perform(MockMvcRequestBuilders.post("/new-game")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(game)))
-//                .andExpect(status().isCreated())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.gameCode").isNotEmpty())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.players").isArray())
-//                ;
+        Player player1 =new Player("ahmed","player1Code");
+        Player player2 =new Player("mohamed","player2Code");
+        List<Player> players = new ArrayList<>(Arrays.asList(player1,player2));
 
+        Game game = new Game("gameCode", Arrays.asList(player1,player2));
 
+        Mockito.when(gameService.createNewGame(playersNames)).thenReturn(game);
+        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl+"/new-game").
+                contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(playersNames)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.player-codes").isArray())
+                .andDo(print());
 
-    }
-    @Test
-    void endGame() {
-//        when(gameService.endGame("gameCode"));
-//        mockMvc.perform(MockMvcRequestBuilders.post("/new-game")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(game)))
-//                .andExpect(status().isCreated())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.gameCode").isNotEmpty())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.players").isArray())
-//                ;
     }
 
     @Test
-    void getPlayerScore() {
-//        List<String> actual = Arrays.asList("ahmed","7");
-//        List<String> expected = Arrays.asList("ahmed","7");
-//        Mockito.when(gameService.getPlayersScores("gameCode")).thenReturn(actual);
-//        Controller controller = new Controller(gameService);
-//        assertEquals(expected,controller.getPlayerScore("gameCode"));
-
+    void endGame() throws Exception {
+        doNothing().when(gameService).endGame("gameCode");
+        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl+"/gameCode/end"))
+                .andExpect(status().isOk()).andDo(print());
     }
+
+    @Test
+    void getPlayerScore() throws Exception {
+        String gameCode="gameCode";
+        Map<String,Integer> score = new LinkedHashMap<>();
+        score.put("ahmed",0);
+        score.put("mohamed",0);
+
+        PlayersScores playersScores = new PlayersScores(score);
+
+        when(gameService.getPlayersScores(gameCode)).thenReturn(playersScores);
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl+"/game/gameCode/score"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.scores").isMap())
+                .andDo(print());
+    }
+
+
 
     @Test
     void playMove() throws Exception {
-        List<Integer> moves = new ArrayList<>();
-        moves.add(0);
-        moves.add(1);
-        moves.add(1);
-//        String expected = "2";
-//        Mockito.when(gameService.getPlayersScores("gameCode")).thenReturn(actual);
-//        Controller controller = new Controller(gameService);
-//        assertEquals(expected,controller.getPlayerScore("gameCode"));
-//        String exp = "\"Score: 2\"";
-//
-//        when(gameService.playMove("gameCode", "playerCode" ,moves)).thenReturn(exp);
-//        mockMvc.perform(MockMvcRequestBuilders.post("/game/gameCode/playerCode/play")
-//                .contentType(MediaType.APPLICATION_JSON).content(exp))
-//                .andExpect(status().isOk());
+        List<Integer> moves = new ArrayList<>(Arrays.asList(0,1,1));
+        PlayAMove playAMove = new PlayAMove(new ArrayList(Arrays.asList(0,1,0)));
+        Score score = new Score(2);
+
+        when(gameService.playMove("gameCode", "code1" ,playAMove)).thenReturn(score);
+        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl+"/game/gameCode/code1/play")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(playAMove)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.player-score").isNumber())
+                .andDo(print());
     }
 }
+

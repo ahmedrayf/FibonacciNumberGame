@@ -1,15 +1,14 @@
 package com.Fibonacci.model;
 
-import com.Fibonacci.dao.PlayerDAO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public  class PlayersScores {
       private Map<String,Integer> scores =new LinkedHashMap<>();
 

@@ -10,7 +10,6 @@ import com.Fibonacci.model.PlayAMove;
 import com.Fibonacci.model.PlayersNames;
 import com.Fibonacci.model.PlayersScores;
 import com.Fibonacci.model.Score;
-import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -60,10 +59,9 @@ public class GameServiceImpl implements GameService{
 
         int result = 0;
         for (int temp : moves){
-            if(fGenerator.isNumberExist(temp)){
-                result += 1;
-            }
+            if(fGenerator.isNumberExist(temp)){result += 1;}
         }
+
         score.setPlayerScore(result);
         int gameId = gameRepo.getGameIdByCode(gameCode);
         playerRepo.updatePlayerScore(result , playerCode , gameId);
@@ -72,9 +70,9 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public PlayersScores getPlayersScores(String gameCode){
-         playersScores = new PlayersScores();
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
 
+        playersScores = new PlayersScores();
         setScores(gameCode);
         return playersScores;
     }

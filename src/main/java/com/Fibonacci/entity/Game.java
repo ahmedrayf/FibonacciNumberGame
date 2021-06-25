@@ -35,4 +35,9 @@ public class Game {
         players.add(thePlayer);
         thePlayer.setGame(this);
     }
+
+    public Game(String gameCode, List<Player> players) {
+        this.gameCode = gameCode;
+        this.players = players;
+    }
 }
