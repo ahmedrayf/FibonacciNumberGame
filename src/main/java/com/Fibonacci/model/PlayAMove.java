@@ -13,6 +13,4 @@ import java.util.List;
 public class PlayAMove {
     @JsonProperty("Numbers")
     private List<Integer> numbers;
-
-
 }

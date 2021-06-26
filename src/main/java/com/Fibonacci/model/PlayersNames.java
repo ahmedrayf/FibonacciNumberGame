@@ -12,5 +12,4 @@ import java.util.LinkedHashSet;
 @AllArgsConstructor
 public class PlayersNames {
     private LinkedHashSet<String> players;
-
 }

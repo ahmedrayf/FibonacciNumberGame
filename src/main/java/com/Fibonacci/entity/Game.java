@@ -27,7 +27,6 @@ public class Game {
     @JsonProperty("player-codes")
     private List<Player> players;
 
-    //Add List of Players
     public void add(Player thePlayer) {
         if (players == null) {
             players = new ArrayList<>();

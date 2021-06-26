@@ -2,16 +2,9 @@ package com.Fibonacci.controller;
 
 import com.Fibonacci.entity.Game;
 import com.Fibonacci.exceptions.BadRequestException;
-import com.Fibonacci.model.PlayAMove;
-import com.Fibonacci.model.PlayersNames;
-import com.Fibonacci.model.PlayersScores;
-import com.Fibonacci.model.Score;
+import com.Fibonacci.model.*;
 import com.Fibonacci.service.GameService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +13,12 @@ public class Controller {
     private GameService gameService;
     public Controller(GameService gameService) {this.gameService = gameService;}
 
-
+    /**
+     *
+     * @param playersNames
+     * @return
+     * @throws BadRequestException
+     */
     @PostMapping("/new-game")
     @ResponseBody
     public Game  createNewGame( @RequestBody PlayersNames playersNames) throws BadRequestException {
@@ -28,6 +26,13 @@ public class Controller {
         return createNewGame;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @param playerCode
+     * @param playerMoves
+     * @return
+     */
     @PostMapping("/game/{game-code}/{player-code}/play")
     public Score playMove(@PathVariable("game-code") String gameCode,
                           @PathVariable("player-code") String playerCode,
@@ -36,12 +41,25 @@ public class Controller {
         return  gameService.playMove(gameCode,playerCode,playerMoves);
     }
 
-
+    /**
+     *
+     * @param gameCode
+     * @return
+     */
     @GetMapping("/game/{game-code}/score")
     public PlayersScores getPlayerScore(@PathVariable("game-code") String gameCode){
         return gameService.getPlayersScores(gameCode);
     }
 
+    @GetMapping("/{game-code}/turn")
+    public Turn getOnTurnPlayer(@PathVariable("game-code") String gameCode){
+        return gameService.playerTurn(gameCode);
+    }
+
+    /**
+     *
+     * @param gameCode
+     */
     @DeleteMapping("/{gameCode}/end")
     public void endGame(@PathVariable("gameCode") String gameCode){
         gameService.endGame(gameCode);

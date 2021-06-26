@@ -6,10 +6,7 @@ import com.Fibonacci.entity.Game;
 import com.Fibonacci.entity.Player;
 import com.Fibonacci.exceptions.BadRequestException;
 import com.Fibonacci.generator.FibonacciGenerator;
-import com.Fibonacci.model.PlayAMove;
-import com.Fibonacci.model.PlayersNames;
-import com.Fibonacci.model.PlayersScores;
-import com.Fibonacci.model.Score;
+import com.Fibonacci.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -25,31 +22,43 @@ public class GameServiceImpl implements GameService{
     private Player player;
     private Game game;
     private PlayersScores playersScores;
+    private Turn turn;
     private FibonacciGenerator fGenerator = new FibonacciGenerator();
 
+    /**
+     *
+     * @param playersNames
+     * @return
+     */
     @Override
     public Game createNewGame(PlayersNames playersNames){
         LinkedHashSet<String> names = playersNames.getPlayers();
         if (names.size()>10){throw new BadRequestException("Max Players in one game 10, You inserted:" + names.size()); }
-        //Insert Random Game Code
+
         game = new Game();
         game.setGameCode(UUID.randomUUID().toString().substring(0,5));
 
-        //Loop Over Posted List of Players Names and set their names with Random Code
-        //Then add Players to The game With Generated Random Code Before
         for (String temp : names){
             player = new Player();
             player.setPlayerName(temp);
             player.setPlayerCode(UUID.randomUUID().toString().substring(0,5));
             game.add(player);
-
         }
         game = gameRepo.save(game);
         return game;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @param playerCode
+     * @param playerMoves
+     * @return
+     */
     @Override
     public  Score playMove(String gameCode, String playerCode, PlayAMove playerMoves) {
+        int turns = playerRepo.getPlayerTurnByPlayerCode(playerCode);
+        if (turns == 20){throw new BadRequestException("You Played all your moves");}
         List<Integer> moves = playerMoves.getNumbers();
         Score  score = new Score();
 
@@ -68,6 +77,11 @@ public class GameServiceImpl implements GameService{
         return score;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @return
+     */
     @Override
     public PlayersScores getPlayersScores(String gameCode){
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
@@ -77,12 +91,29 @@ public class GameServiceImpl implements GameService{
         return playersScores;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @return
+     */
+    @Override
+    public Turn playerTurn(String gameCode){
+        if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
+        turn = new Turn();
+        List<PlayerTurnDto> playerTurnDtos = playerRepo.getPlayerTurns(gameCode);
+        turn.nextTurn(playerTurnDtos);
+        return turn;
+    }
+
+    /**
+     *
+     * @param gameCode
+     */
     @Override
     public void endGame(String gameCode) {
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
         gameRepo.deleteByGameCode(gameCode);
     }
-
 
     void setScores(String gameCode){
         List<String> playersNames = playerRepo.getPlayersNames(gameCode);
