@@ -23,13 +23,9 @@ public class GameServiceImpl implements GameService{
     private Game game;
     private PlayersScores playersScores;
     private Turn turn;
+    private Score  score;
     private FibonacciGenerator fGenerator = new FibonacciGenerator();
 
-    /**
-     *
-     * @param playersNames
-     * @return
-     */
     @Override
     public Game createNewGame(PlayersNames playersNames){
         LinkedHashSet<String> names = playersNames.getPlayers();
@@ -48,20 +44,13 @@ public class GameServiceImpl implements GameService{
         return game;
     }
 
-    /**
-     *
-     * @param gameCode
-     * @param playerCode
-     * @param playerMoves
-     * @return
-     */
     @Override
     public  Score playMove(String gameCode, String playerCode, PlayAMove playerMoves) {
         int turns = playerRepo.getPlayerTurnByPlayerCode(playerCode);
-        if (turns == 20){throw new BadRequestException("You Played all your moves");}
         List<Integer> moves = playerMoves.getNumbers();
-        Score  score = new Score();
+        score = new Score();
 
+        if (turns == 40){throw new BadRequestException("You Played all your moves");}
         if (moves.size()>3){throw new BadRequestException("Max Numbers in a move 3");}
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
         else if (!playerRepo.selectExistsPlayerCode(playerCode)){throw new BadRequestException("Player Code: " + playerCode + " isn't Exist");}
@@ -77,11 +66,6 @@ public class GameServiceImpl implements GameService{
         return score;
     }
 
-    /**
-     *
-     * @param gameCode
-     * @return
-     */
     @Override
     public PlayersScores getPlayersScores(String gameCode){
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
@@ -91,11 +75,6 @@ public class GameServiceImpl implements GameService{
         return playersScores;
     }
 
-    /**
-     *
-     * @param gameCode
-     * @return
-     */
     @Override
     public Turn playerTurn(String gameCode){
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
@@ -105,10 +84,6 @@ public class GameServiceImpl implements GameService{
         return turn;
     }
 
-    /**
-     *
-     * @param gameCode
-     */
     @Override
     public void endGame(String gameCode) {
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }

@@ -13,24 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 public class RestExceptionHandlerController {
 	private CustomException customException;
 
-	/**
-	 *
-	 * @param ex
-	 * @return
-	 */
 	@ExceptionHandler(BadRequestException.class)
 	public ResponseEntity<Object> handleCustomException(BadRequestException ex) {
 		customException = new CustomException(ex.getMessage());
 		return new ResponseEntity<>(customException,HttpStatus.BAD_REQUEST);
 	}
 
-	/**
-	 *
-	 * @param ex
-	 * @param request
-	 * @param response
-	 * @return
-	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> handle(Exception ex,
 										 HttpServletRequest request, HttpServletResponse response) {

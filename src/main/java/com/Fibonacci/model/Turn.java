@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Turn {
-
     private String next;
 
     public void nextTurn(List<PlayerTurnDto> playerTurnDtos){

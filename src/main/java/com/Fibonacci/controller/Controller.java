@@ -13,12 +13,6 @@ public class Controller {
     private GameService gameService;
     public Controller(GameService gameService) {this.gameService = gameService;}
 
-    /**
-     *
-     * @param playersNames
-     * @return
-     * @throws BadRequestException
-     */
     @PostMapping("/new-game")
     @ResponseBody
     public Game  createNewGame( @RequestBody PlayersNames playersNames) throws BadRequestException {
@@ -26,13 +20,6 @@ public class Controller {
         return createNewGame;
     }
 
-    /**
-     *
-     * @param gameCode
-     * @param playerCode
-     * @param playerMoves
-     * @return
-     */
     @PostMapping("/game/{game-code}/{player-code}/play")
     public Score playMove(@PathVariable("game-code") String gameCode,
                           @PathVariable("player-code") String playerCode,
@@ -41,11 +28,6 @@ public class Controller {
         return  gameService.playMove(gameCode,playerCode,playerMoves);
     }
 
-    /**
-     *
-     * @param gameCode
-     * @return
-     */
     @GetMapping("/game/{game-code}/score")
     public PlayersScores getPlayerScore(@PathVariable("game-code") String gameCode){
         return gameService.getPlayersScores(gameCode);
@@ -56,10 +38,6 @@ public class Controller {
         return gameService.playerTurn(gameCode);
     }
 
-    /**
-     *
-     * @param gameCode
-     */
     @DeleteMapping("/{gameCode}/end")
     public void endGame(@PathVariable("gameCode") String gameCode){
         gameService.endGame(gameCode);
