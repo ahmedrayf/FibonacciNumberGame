@@ -2,7 +2,7 @@ package com.Fibonacci.generator;
 
 import java.util.HashSet;
 
-public class FibonacciGenerator {
+public class   FibonacciGenerator {
     private HashSet<Integer> fibonacciNumbers;
 
     public Boolean isNumberExist(int numberInserted){

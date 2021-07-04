@@ -26,6 +26,11 @@ public class GameServiceImpl implements GameService{
     private Score  score;
     private FibonacciGenerator fGenerator = new FibonacciGenerator();
 
+    /**
+     *
+     * @param playersNames
+     * @return
+     */
     @Override
     public Game createNewGame(PlayersNames playersNames){
         LinkedHashSet<String> names = playersNames.getPlayers();
@@ -44,6 +49,13 @@ public class GameServiceImpl implements GameService{
         return game;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @param playerCode
+     * @param playerMoves
+     * @return
+     */
     @Override
     public  Score playMove(String gameCode, String playerCode, PlayAMove playerMoves) {
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
@@ -73,6 +85,11 @@ public class GameServiceImpl implements GameService{
         return score;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @return
+     */
     @Override
     public PlayersScores getPlayersScores(String gameCode){
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
@@ -82,6 +99,11 @@ public class GameServiceImpl implements GameService{
         return playersScores;
     }
 
+    /**
+     *
+     * @param gameCode
+     * @return
+     */
     @Override
     public Turn playerTurn(String gameCode){
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
@@ -91,12 +113,20 @@ public class GameServiceImpl implements GameService{
         return turn;
     }
 
+    /**
+     *
+     * @param gameCode
+     */
     @Override
     public void endGame(String gameCode) {
         if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist"); }
         gameRepo.deleteByGameCode(gameCode);
     }
 
+    /**
+     *
+     * @param gameCode
+     */
     void setScores(String gameCode){
         List<String> playersNames = playerRepo.getPlayersNames(gameCode);
         List<Integer> scores = playerRepo.getPlayersScores(gameCode);

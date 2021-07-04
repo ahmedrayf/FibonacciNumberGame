@@ -13,6 +13,7 @@ import java.util.List;
 public class Game {
     public Game() {}
 
+    @JsonProperty
     @Getter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
