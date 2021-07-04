@@ -36,4 +36,7 @@ public interface PlayerDAO extends JpaRepository<Player,Long> {
 
     @Query(value = turnValue , nativeQuery = true)
     int getPlayerTurnByPlayerCode(String playerCode);
+
+    Player getByPlayerCode(String playerCode);
+
 }

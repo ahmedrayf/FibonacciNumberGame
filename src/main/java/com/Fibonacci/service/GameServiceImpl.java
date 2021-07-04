@@ -46,14 +46,21 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public  Score playMove(String gameCode, String playerCode, PlayAMove playerMoves) {
-        int turns = playerRepo.getPlayerTurnByPlayerCode(playerCode);
+        if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
+        else if (!playerRepo.selectExistsPlayerCode(playerCode)){throw new BadRequestException("Player Code: " + playerCode + " isn't Exist");}
+
+        List<PlayerTurnDto> playerTurnDtos = playerRepo.getPlayerTurns(gameCode);
+        turn = new Turn();
+        turn.nextTurn(playerTurnDtos);
+        player = playerRepo.getByPlayerCode(playerCode);
+
+        int turnsPlayed = playerRepo.getPlayerTurnByPlayerCode(playerCode);
         List<Integer> moves = playerMoves.getNumbers();
         score = new Score();
 
-        if (turns == 40){throw new BadRequestException("You Played all your moves");}
-        if (moves.size()>3){throw new BadRequestException("Max Numbers in a move 3");}
-        if (!gameRepo.selectExistsGameCode(gameCode)){throw new BadRequestException("Game Code: " + gameCode + " isn't Exist");}
-        else if (!playerRepo.selectExistsPlayerCode(playerCode)){throw new BadRequestException("Player Code: " + playerCode + " isn't Exist");}
+        if(!player.getPlayerName().equals(turn.getNext())){throw new BadRequestException(("It's Not Your turn, it's " + turn.getNext() + " turn"));}
+        else if (turnsPlayed > 40){throw new BadRequestException("You Played all your moves, max turns 20 for one player ");}
+        else if (moves.size()>3){throw new BadRequestException("Max Numbers in a move 3");}
 
         int result = 0;
         for (int temp : moves){
