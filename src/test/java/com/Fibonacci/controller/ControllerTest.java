@@ -32,7 +32,10 @@ class ControllerTest {
     private GameService gameService;
     private String baseUrl = "/api";
 
-
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void createNewGame() throws Exception {
         LinkedHashSet<String> player = new LinkedHashSet<>(Arrays.asList("ahmed","mohamed"));
@@ -54,6 +57,10 @@ class ControllerTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void playMove() throws Exception {
         List<Integer> moves = new ArrayList<>(Arrays.asList(0,1,1));
@@ -69,7 +76,10 @@ class ControllerTest {
                 .andDo(print());
     }
 
-
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void getPlayerScore() throws Exception {
         Map<String,Integer> score = new LinkedHashMap<>();
@@ -85,6 +95,10 @@ class ControllerTest {
                 .andDo(print());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void getOnTurnPlayer() throws Exception{
         Turn turn =new Turn("code1");
@@ -102,6 +116,10 @@ class ControllerTest {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     //Test Exceptions
     @Test
     void toDoWhenPlayersMoreThan10() throws Exception{
@@ -118,6 +136,10 @@ class ControllerTest {
                 .andDo(print());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void toDoWhenGameCodeIsNotExist() throws Exception{
 
@@ -126,6 +148,10 @@ class ControllerTest {
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void toDoWhenPlayerCodeIsNotExist() throws Exception{
         List<Integer> moves = new ArrayList<>(Arrays.asList(0,1,1));
@@ -140,6 +166,10 @@ class ControllerTest {
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     void toDoWhenMovesMoreThan3() throws Exception{
         List<Integer> moves = new ArrayList<>(Arrays.asList(0,1,1));
